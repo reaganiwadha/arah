@@ -5,13 +5,18 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ArahServerConfig struct {
+type arahServerConfig struct {
 	Server struct {
-		Port int `mapstructure:"port"`
+		Port   int    `mapstructure:"port"`
+		Domain string `mapstructure:"domain"`
 	} `mapstructure:"server"`
+	Captcha struct {
+		Sitekey string `mapstructure:"sitekey"`
+		Secret  string `mapstructure:"secret"`
+	}
 }
 
-func loadConfig() (res *ArahServerConfig) {
+func loadConfig() (res *arahServerConfig) {
 	viper.AddConfigPath(".")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
