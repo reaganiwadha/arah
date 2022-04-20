@@ -3,6 +3,7 @@ module github.com/reaganiwadha/arah
 go 1.18
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.11.0

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/reaganiwadha/arah/common/middleware"
 	hc_client "github.com/reaganiwadha/arah/impl/hcaptcha/client"
 	link_handler "github.com/reaganiwadha/arah/impl/link/http"
 	link_uc "github.com/reaganiwadha/arah/impl/link/usecase"
@@ -21,6 +22,8 @@ func main() {
 
 func buildServer(config *arahServerConfig) *gin.Engine {
 	r := gin.Default()
+	r.Use(gin.Recovery())
+	r.Use(middleware.TraceId())
 
 	linkUc := link_uc.NewLinkUsecase()
 	hcClient := hc_client.NewHCaptchaClient(config.Captcha.Secret)
