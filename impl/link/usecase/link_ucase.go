@@ -1,18 +1,24 @@
 package arah
 
-import "github.com/reaganiwadha/arah/domain"
+import (
+	"context"
+	"github.com/reaganiwadha/arah/domain"
+)
 
 type linkUsecase struct {
+	r domain.LinkRepository
 }
 
-func NewLinkUsecase() domain.LinkUsecase {
-	return &linkUsecase{}
+func (l linkUsecase) CreateLink(ctx context.Context, slug string, link string) (res *domain.ShortenedLink, err error) {
+	return l.r.CreateLink(ctx, slug, link)
 }
 
-func (u *linkUsecase) CreateLink(slug string, link string) (res *domain.ShortenedLink, err error) {
+func (l linkUsecase) GetLink(ctx context.Context, slug string) (res *domain.ShortenedLink, err error) {
 	return
 }
 
-func (u *linkUsecase) GetLink(slug string) (res *domain.ShortenedLink, err error) {
-	return
+func NewLinkUsecase(r domain.LinkRepository) domain.LinkUsecase {
+	return &linkUsecase{
+		r: r,
+	}
 }

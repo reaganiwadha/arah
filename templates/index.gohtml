@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>arah shortener</title>
     <link rel="stylesheet" href="https://unpkg.com/chota@latest">
@@ -16,7 +16,7 @@
             <div class="col-8">
                 <div class="row">
                     <div class="col-2">
-                        <p>{{ .domain }}/</p>
+                        <p>{{ .Domain }}/</p>
                     </div>
 
                     <div class="col-4">
@@ -33,10 +33,25 @@
                 </div>
                 <div class="row">
                     <div class="col" style="text-align: end">
-                        <div class="h-captcha" data-sitekey={{ .hcsitekey }}></div>
+                        <div class="h-captcha" data-sitekey={{ .HcSitekey }}></div>
                         <input type="submit" value="Create">
                     </div>
                 </div>
+
+                {{ if .ErrorString  }}
+                    <div class="card error">
+                        <p>{{ .ErrorString }}</p>
+                    </div>
+                {{end  }}
+
+                {{ if .ShortenedLink }}
+                    <div class="card error">
+                        <p>Link created!</p>
+                        <a href={{.ShortenedLink}}>{{.ShortenedLink}}</a>
+                        <p>goes to</p>
+                        <a href={{.OriginalLink}}>{{.OriginalLink}}</a>
+                    </div>
+                {{end}}
             </div>
         </div>
     </form>

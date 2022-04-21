@@ -14,6 +14,10 @@ type arahServerConfig struct {
 		Sitekey string `mapstructure:"sitekey"`
 		Secret  string `mapstructure:"secret"`
 	}
+	Mongo struct {
+		URI      string `mapstructure:"uri"`
+		Database string `mapstructure:"database"`
+	}
 }
 
 func loadConfig() (res *arahServerConfig) {
