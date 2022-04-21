@@ -62,16 +62,15 @@ func (h *linkHandler) submit(ctx *gin.Context) {
 
 	pageConfig := h.createPageTemplateData()
 
-	if err != nil {
-		pageConfig.ErrorString = "Unknown Error"
-		ctx.Status(http.StatusInternalServerError)
-		indexTemplate.Execute(ctx.Writer, pageConfig)
-		return
-	}
+	if err != nil || !ok {
+		if err != nil {
+			pageConfig.ErrorString = "Unknown Error"
+			ctx.Status(http.StatusInternalServerError)
+		} else if !ok {
+			pageConfig.ErrorString = "Captcha Failed"
+			ctx.Status(http.StatusBadRequest)
+		}
 
-	if !ok {
-		pageConfig.ErrorString = "Captcha Failed"
-		ctx.Status(http.StatusBadRequest)
 		indexTemplate.Execute(ctx.Writer, pageConfig)
 		return
 	}
@@ -83,6 +82,12 @@ func (h *linkHandler) submit(ctx *gin.Context) {
 	if err != nil {
 		if errors.Is(err, domain.ErrDataExists) {
 			pageConfig.ErrorString = fmt.Sprintf("The short for `%s` already exists 😔", slug)
+			ctx.Status(http.StatusBadRequest)
+		} else if errors.Is(err, domain.ErrInvalidSlugFormat) {
+			pageConfig.ErrorString = "Invalid slug format"
+			ctx.Status(http.StatusBadRequest)
+		} else if errors.Is(err, domain.ErrInvalidLinkFormat) {
+			pageConfig.ErrorString = "Invalid link"
 			ctx.Status(http.StatusBadRequest)
 		} else {
 			pageConfig.ErrorString = "Unknown Error"

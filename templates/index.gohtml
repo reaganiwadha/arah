@@ -14,7 +14,7 @@
     <form method="post" action="submit">
         <div>
             {{ if .ErrorString  }}
-                <blockquote>
+                <blockquote style="border-left: 4px solid rgba(203,21,21,0.67)">
                     {{ .ErrorString }} ❗
                 </blockquote>
             {{end  }}
