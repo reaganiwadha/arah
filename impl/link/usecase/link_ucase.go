@@ -18,7 +18,7 @@ func init() {
 }
 
 func (l linkUsecase) CreateLink(ctx context.Context, slug string, link string) (res *domain.ShortenedLink, err error) {
-	_, err = url.ParseRequestURI(link)
+	parsedUrl, err := url.Parse(link)
 
 	if err != nil {
 		err = domain.ErrInvalidLinkFormat
@@ -30,11 +30,15 @@ func (l linkUsecase) CreateLink(ctx context.Context, slug string, link string) (
 		return
 	}
 
-	return l.r.CreateLink(ctx, slug, link)
+	if parsedUrl.Scheme == "" {
+		parsedUrl.Scheme = "http"
+	}
+
+	return l.r.CreateLink(ctx, slug, parsedUrl.String())
 }
 
 func (l linkUsecase) GetLink(ctx context.Context, slug string) (res *domain.ShortenedLink, err error) {
-	return
+	return l.r.GetLink(ctx, slug)
 }
 
 func NewLinkUsecase(r domain.LinkRepository) domain.LinkUsecase {

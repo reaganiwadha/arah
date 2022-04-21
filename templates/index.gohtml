@@ -22,9 +22,9 @@
             {{ if .ShortenedLink }}
                 <blockquote>
                     Link created!
-                    <a href={{.ShortenedLink}}>{{.ShortenedLink}}</a>
+                    <a href={{( printf "%s%s" "//" .ShortenedLink)}}>{{.ShortenedLink}}</a>
                     goes to
-                    <a href={{.OriginalLink}}>{{.OriginalLink}}</a>
+                    <a href={{(.OriginalLink)}}>{{.OriginalLink}}</a>
                 </blockquote>
             {{end}}
 

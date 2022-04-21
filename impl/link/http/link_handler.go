@@ -29,6 +29,7 @@ func ConfigureLinkHandler(u domain.LinkUsecase, domain string, hcSitekey string,
 	}
 
 	r.GET("/", handler.mainPage)
+	r.GET("/:slug", handler.slugRedirect)
 	r.POST("/submit", handler.submit)
 }
 
@@ -49,6 +50,26 @@ func (h *linkHandler) createPageTemplateData() pageTemplateData {
 
 func (h *linkHandler) mainPage(ctx *gin.Context) {
 	indexTemplate.Execute(ctx.Writer, h.createPageTemplateData())
+}
+
+func (h *linkHandler) slugRedirect(ctx *gin.Context) {
+	slug := ctx.Param("slug")
+
+	linkCtx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	link, err := h.u.GetLink(linkCtx, slug)
+	defer cancel()
+
+	if err != nil {
+		if errors.Is(err, domain.ErrDataNotFound) {
+			ctx.Status(http.StatusNotFound)
+		} else {
+			ctx.Status(http.StatusInternalServerError)
+		}
+
+		return
+	}
+
+	ctx.Redirect(http.StatusFound, link.Link)
 }
 
 func (h *linkHandler) submit(ctx *gin.Context) {
@@ -76,7 +97,7 @@ func (h *linkHandler) submit(ctx *gin.Context) {
 	}
 
 	clCtx, clCancel := context.WithTimeout(context.Background(), time.Second*5)
-	_, err = h.u.CreateLink(clCtx, slug, link)
+	shLink, err := h.u.CreateLink(clCtx, slug, link)
 	defer clCancel()
 
 	if err != nil {
@@ -98,8 +119,8 @@ func (h *linkHandler) submit(ctx *gin.Context) {
 		return
 	}
 
-	pageConfig.OriginalLink = link
-	pageConfig.ShortenedLink = fmt.Sprintf("https://%s/%s", h.domain, slug)
+	pageConfig.OriginalLink = shLink.Link
+	pageConfig.ShortenedLink = fmt.Sprintf("%s/%s", h.domain, slug)
 
 	indexTemplate.Execute(ctx.Writer, pageConfig)
 	ctx.Status(http.StatusCreated)

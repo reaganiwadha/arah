@@ -16,6 +16,12 @@ type linkRepository struct {
 	db *mongo.Database
 }
 
+type shortenedLinkModel struct {
+	ID   string `bson:"_id,omitempty"`
+	Slug string `bson:"slug"`
+	Link string `bson:"link"`
+}
+
 func NewLinkRepository(db *mongo.Database) (res domain.LinkRepository, err error) {
 	linkCollection := db.Collection(linkCollectionName)
 
@@ -65,6 +71,24 @@ func (l linkRepository) CreateLink(ctx context.Context, slug string, link string
 }
 
 func (l linkRepository) GetLink(ctx context.Context, slug string) (res *domain.ShortenedLink, err error) {
-	//TODO implement me
-	panic("implement me")
+	c := l.db.Collection(linkCollectionName)
+
+	var result shortenedLinkModel
+
+	err = c.FindOne(ctx, bson.M{
+		"slug": slug,
+	}).Decode(&result)
+
+	if err == mongo.ErrNoDocuments {
+		err = domain.ErrDataNotFound
+		return
+	}
+
+	res = &domain.ShortenedLink{
+		ID:   result.ID,
+		Slug: result.Slug,
+		Link: result.Link,
+	}
+
+	return
 }
