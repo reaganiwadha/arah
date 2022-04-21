@@ -2,57 +2,45 @@
 <html lang="en">
 <head>
     <title>arah shortener</title>
-    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.css">
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 </head>
 
-<body class="dark">
-<div class="container">
-    <div class="row">
+<body>
+<div>
+    <div>
         <h1>👉 arah shortener</h1>
     </div>
     <form method="post" action="submit">
-        <div class="row">
-            <div class="col-8">
-                <div class="row">
-                    <div class="col-2">
-                        <p>{{ .Domain }}/</p>
-                    </div>
+        <div>
+            {{ if .ErrorString  }}
+                <blockquote>
+                    {{ .ErrorString }} ❗
+                </blockquote>
+            {{end  }}
 
-                    <div class="col-4">
-                        <input name="slug" type="text" placeholder="glittery-stars">
-                    </div>
+            {{ if .ShortenedLink }}
+                <blockquote>
+                    Link created!
+                    <a href={{.ShortenedLink}}>{{.ShortenedLink}}</a>
+                    goes to
+                    <a href={{.OriginalLink}}>{{.OriginalLink}}</a>
+                </blockquote>
+            {{end}}
 
-                    <div class="col-2">
-                        <p style="text-align: center">👉</p>
-                    </div>
-
-                    <div class="col-4">
-                        <input name="link" type="text" placeholder="https://glittery-stars.site/">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col" style="text-align: end">
-                        <div class="h-captcha" data-sitekey={{ .HcSitekey }}></div>
-                        <input type="submit" value="Create">
-                    </div>
-                </div>
-
-                {{ if .ErrorString  }}
-                    <div class="card error">
-                        <p>{{ .ErrorString }}</p>
-                    </div>
-                {{end  }}
-
-                {{ if .ShortenedLink }}
-                    <div class="card error">
-                        <p>Link created!</p>
-                        <a href={{.ShortenedLink}}>{{.ShortenedLink}}</a>
-                        <p>goes to</p>
-                        <a href={{.OriginalLink}}>{{.OriginalLink}}</a>
-                    </div>
-                {{end}}
+            <div class="row">
+                <label>{{ .Domain }}/</label>
+                <input name="slug" type="text" placeholder="glittery-stars">
+                <label>Redirects to ⬇️</label>
+                <input name="link" type="text" placeholder="https://glittery-stars.site/">
             </div>
+
+            <h2></h2>
+
+            <div class="h-captcha" data-sitekey={{ .HcSitekey }}></div>
+            <h4></h4>
+
+            <input type="submit" value="Create">
         </div>
     </form>
 </div>
